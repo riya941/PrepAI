@@ -43,11 +43,36 @@ function MicRecorder({ onStop }) {
       }
 
       finalTranscriptRef.current = final;
+      console.log("LIVE TRANSCRIPT:", final + interimTranscript);
       setTranscript(final + interimTranscript);
+      
     };
 
     recognition.onend = () => {
       setRecording(false);
+
+      const finalAnswer = finalTranscriptRef.current.trim();
+
+      const durationSeconds = startedAtRef.current
+        ? (Date.now() - startedAtRef.current) / 1000
+        : 0;
+
+      console.log("FINAL ANSWER:", finalAnswer);
+      console.log("DURATION:", durationSeconds);
+
+      if (!finalAnswer) {
+        alert("Please speak something");
+        return;
+      }
+
+      onStop({
+        answer: finalAnswer,
+        durationSeconds,
+      });
+
+      finalTranscriptRef.current = "";
+      startedAtRef.current = null;
+      setTranscript("");
     };
 
     recognitionRef.current = recognition;
@@ -55,27 +80,10 @@ function MicRecorder({ onStop }) {
   };
 
   const stopRecording = () => {
+    console.log("STOP CLICKED");
     recognitionRef.current?.stop();
-
-    const finalAnswer = finalTranscriptRef.current.trim();
-    const durationSeconds = startedAtRef.current
-      ? (Date.now() - startedAtRef.current) / 1000
-      : 0;
-
-    if (!finalAnswer) {
-      alert("Please speak something");
-      return;
-    }
-
-    onStop({
-      answer: finalAnswer,
-      durationSeconds,
-    });
-
-    finalTranscriptRef.current = "";
-    startedAtRef.current = null;
-    setTranscript("");
   };
+
 
   return (
     <div className="mt-4 text-center">

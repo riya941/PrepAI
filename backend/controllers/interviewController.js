@@ -132,6 +132,7 @@ Instructions:
 - If the previous answer was weak or vague, ask a simpler probing question.
 - Do not include explanations, labels, or markdown.
 `;
+    console.log("sendin request to gemini")
     console.time("Gemini Question");
     const result = await model.generateContent(prompt);
     console.timeEnd("Gemini Question");
